@@ -26,13 +26,14 @@ st.write("---")
 st.subheader("🎬 TikTok Viral Script AI")
 st.caption("AI strategist untuk konten viral Indonesia 🇮🇩")
 
-# Form Input Berdasarkan Desain Gambar
-niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kecantikan, Finance, Kuliner, Tech...")
-topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Skincare rutin, Jualan online, Tips diet...")
-audience = st.text_input("👤 Target Audience *wajib*", placeholder="e.g., Cewek 20-30 tahun, Ibu rumah tangga...")
+# Form Input Berdasarkan Desain Gambar (Sudah Ditambah Kolom Brand)
+brand = st.text_input("🏷️ Nama Brand / Usaha *wajib*", placeholder="e.g., Seblak Salah, Mie Judes, Araya Consulting...")
+niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kuliner, Kecantikan, Finance, Otomotif...")
+topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Menu pedas baru, Jualan online, Tips kepemimpinan...")
+audience = st.text_input("👤 Target Audience *wajib*", placeholder="e.g., Pecinta pedas Lamongan, Gen Z, Pemilik bisnis...")
 
-pain_point = st.text_input("🩸 Pain Point Audience (optional)", placeholder="e.g., Bingung mulai dari mana, Takut gagal...")
-desire = st.text_input("💖 Desire / Hasrat Audience (optional)", placeholder="e.g., Pengen punya penghasilan sampingan...")
+pain_point = st.text_input("🩸 Pain Point Audience (optional)", placeholder="e.g., Bingung cari makan siang, Pengen berkembang tapi sibuk...")
+desire = st.text_input("💖 Desire / Hasrat Audience (optional)", placeholder="e.g., Pengen makan enak kenyang, Pengen jadi leader hebat...")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -50,8 +51,8 @@ description = st.text_area("📝 Deskripsi ide konten kamu (optional)", placehol
 
 # Tombol Aksi & Logika Pemanggilan Gemini API
 if st.button("🚀 Generate Viral Script", use_container_width=True):
-    if not niche or not topic or not audience:
-        st.error("Mohon isi kolom Niche, Topic, dan Target Audience terlebih dahulu!")
+    if not brand or not niche or not topic or not audience:
+        st.error("Mohon isi kolom Brand, Niche, Topic, dan Target Audience terlebih dahulu!")
     elif not api_key:
         st.error("API Key belum dimasukkan!")
     else:
@@ -59,8 +60,10 @@ if st.button("🚀 Generate Viral Script", use_container_width=True):
             try:
                 client = genai.Client(api_key=api_key)
                 
+                # Memasukkan variabel brand ke dalam prompt
                 prompt = f"""
                 Hasilkan skrip video pendek viral berdasarkan data berikut:
+                - Nama Brand/Usaha: {brand}
                 - Niche: {niche}
                 - Topik/Produk: {topic}
                 - Target Audiens: {audience}
@@ -76,11 +79,12 @@ if st.button("🚀 Generate Viral Script", use_container_width=True):
                     "Tugas Anda adalah membuat skrip video pendek berdurasi 30-60 detik yang memiliki retensi tinggi. "
                     "Skrip harus dipisahkan dengan jelas menjadi kolom [Visual/Aksi Kamera] dan [Audio/Narasi].\n"
                     "Wajib menyertakan HOOK kuat di 3 detik pertama, isi (BODY) yang mengalir, dan Call to Action (CTA) yang sesuai dengan goal.\n"
-                    "Gunakan gaya bahasa natural, santai (gunakan saya/kamu jika relevan), scannable, tidak kaku, dan hindari kata-kata berlebihan (lebay)."
+                    "PENTING: Integrasikan nama Brand yang diberikan secara natural ke dalam narasi/audio (misalnya disebut di awal sebagai bagian dari solusi, atau di akhir sebagai bagian dari CTA).\n"
+                    "Gunakan gaya bahasa natural, kasual/santai (gunakan saya/kamu jika relevan), scannable, tidak kaku, dan hindari kata-kata berlebihan (lebay)."
                 )
                 
                 response = client.models.generate_content(
-                    model='gemini-3-flash',
+                    model='gemini-2.5-flash',
                     contents=prompt,
                     config=types.GenerateContentConfig(
                         system_instruction=system_instruction,
