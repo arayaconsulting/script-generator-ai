@@ -5,7 +5,7 @@ import os
 
 # 1. Konfigurasi Halaman & Tema Premium (Sesuai Struktur Asli Anda)
 st.set_page_config(
-    page_title="Script Generator AI",
+    page_title="Script & Prompt Generator AI",
     page_icon="🪄",
     layout="centered"
 )
@@ -79,7 +79,7 @@ st.markdown("""
     <div style='text-align: center; padding-bottom: 10px;'>
         <h1 style='color: #1e1e1e; margin-top: 5px; font-weight: 800; font-size: 32px;'>🔮 Script Generator AI</h1>
         <p style='color: #666666; font-size: 15px; max-width: 500px; margin: 0 auto;'>
-            Platform peracik skrip video pendek viral untuk TikTok, Reels, dan Shorts dengan pendekatan psikologi audiens.
+            Platform peracik skrip & prompt video pendek viral untuk TikTok, Reels, dan Shorts dengan pendekatan psikologi audiens.
         </p>
     </div>
 """, unsafe_allow_html=True)
