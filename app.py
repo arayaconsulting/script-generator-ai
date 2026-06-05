@@ -3,7 +3,7 @@ from google import genai
 from google.genai import types
 import os
 
-# 1. Konfigurasi Halaman & Tema Premium (Menggunakan Judul Araya Consulting)
+# 1. Konfigurasi Halaman & Tema Premium
 st.set_page_config(
     page_title="Araya Consulting - Script Generator AI",
     page_icon="🔮",
@@ -60,10 +60,24 @@ if not api_key:
     with st.sidebar:
         api_key = st.text_input("Gemini API Key", type="password")
 
-# 3. Header Landing Page Elegan dengan Branding Araya Consulting
+# 3. Menampilkan Logo Resmi yang Sudah Di-upload
+# Mencoba mendeteksi logo dengan ekstensi .png atau .jpg otomatis
+logo_path = "logo.png"
+if not os.path.exists(logo_path):
+    logo_path = "logo.jpg"
+
+if os.path.exists(logo_path):
+    # Membuat 3 kolom agar logo berada tepat di tengah (center) secara proporsional
+    col_logo1, col_logo2, col_logo3 = st.columns([1, 2, 1])
+    with col_logo2:
+        st.image(logo_path, use_container_width=True)
+else:
+    # Fallback tulisan jika logo belum terbaca sempurna oleh server
+    st.markdown("<h3 style='text-align: center; color: #b30000; letter-spacing: 2px;'>ARAYA CONSULTING</h3>", unsafe_allow_html=True)
+
+# Header Judul Aplikasi
 st.markdown("""
     <div style='text-align: center; padding-bottom: 10px;'>
-        <p style='color: #888888; font-weight: bold; letter-spacing: 2px; margin-bottom: 0; font-size: 14px;'>ARAYA CONSULTING</p>
         <h1 style='color: #1e1e1e; margin-top: 5px; font-weight: 800; font-size: 32px;'>🔮 Script Generator AI</h1>
         <p style='color: #666666; font-size: 15px; max-width: 500px; margin: 0 auto;'>
             Platform cerdas peracik skrip video pendek viral untuk TikTok, Reels, dan Shorts dengan pendekatan psikologi audiens.
@@ -75,7 +89,7 @@ st.write("---")
 st.subheader("🎬 TikTok Viral Script AI")
 st.caption("Lengkapi detail di bawah untuk menghasilkan skrip kustom ber-retensi tinggi.")
 
-# 4. Form Input Terstruktur (Mempertahankan Struktur Kolom Anda)
+# 4. Form Input Terstruktur
 brand = st.text_input("🏷️ Nama Brand / Usaha *wajib*", placeholder="e.g., Seblak Salah, Mie Judes, Araya Consulting...")
 niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kuliner, Kecantikan, Finance, Otomotif...")
 topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Menu pedas baru, Jualan online, Tips kepemimpinan...")
@@ -98,7 +112,7 @@ with col2:
 
 description = st.text_area("📝 Deskripsi ide konten kamu (optional)", placeholder="Ceritakan konsep video kamu, pesan utama, atau hal spesifik yang mau disampaikan...")
 
-# 5. Tombol Aksi & Logika Pemanggilan Gemini API (Menggunakan Model Stabil)
+# 5. Tombol Aksi & Logika Pemanggilan Gemini API
 if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
     if not brand or not niche or not topic or not audience:
         st.error("Mohon isi kolom Brand, Niche, Topic, dan Target Audience terlebih dahulu!")
@@ -140,7 +154,6 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                     ),
                 )
                 
-                # Menampilkan Hasil dengan Desain Premium & Wadah Salin Instan
                 st.success("✨ Skrip Berhasil Dibuat!")
                 st.markdown("### 📋 Hasil Rekomendasi Skrip")
                 
@@ -150,7 +163,6 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                     </div>
                 """, unsafe_allow_html=True)
                 
-                # Mempermudah copy-paste langsung di tablet tanpa block manual
                 st.write("")
                 st.text_area("⬇️ Blok & Salin Teks Skrip di Bawah Ini:", value=response.text, height=180)
                 st.caption("💡 Tips Praktis: Tahan atau ketuk dua kali di dalam kotak teks di atas untuk menyalin (*copy*) seluruh skrip ke CapCut tablet Anda.")
