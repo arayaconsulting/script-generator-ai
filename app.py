@@ -88,7 +88,7 @@ st.write("---")
 st.subheader("🎬 TikTok Viral Script AI")
 st.caption("Lengkapi detail di bawah untuk menghasilkan skrip kustom ber-retensi tinggi.")
 
-# 4. Form Input Terstruktur (100% Memanjang ke Bawah Sesuai Format Asli yang Anda Sukai)
+# 4. Form Input Terstruktur (100% Memanjang ke Bawah)
 brand = st.text_input("🏷️ Nama Brand / Usaha *wajib*", placeholder="e.g., Seblak Salah, Mie Judes, Araya Consulting...")
 niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kuliner, Kecantikan, Finance, Otomotif...")
 topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Menu pedas baru, Jualan online, Tips kepemimpinan...")
@@ -109,7 +109,7 @@ style = st.selectbox(
 
 description = st.text_area("📝 Deskripsi ide konten kamu (optional)", placeholder="Ceritakan konsep video kamu, pesan utama, atau hal spesifik yang mau disampaikan...")
 
-# 5. Tombol Aksi & Logika Pemanggilan Gemini API dengan Sistem Dua Tab Output
+# 5. Tombol Aksi & Logika Pemanggilan Gemini API dengan Sistem Dua Tab Output (Prompt Video AI)
 if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
     if not brand or not niche or not topic or not audience:
         st.error("Mohon isi kolom Brand, Niche, Topic, dan Target Audience terlebih dahulu!")
@@ -134,17 +134,16 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                 """
                 
                 system_instruction = (
-                    "Anda adalah TikTok Viral Script AI dari Araya Consulting. Tugas Anda adalah menghasilkan output skrip dalam DUA FORMAT TERPISAH secara berurutan. "
+                    "Anda adalah AI Video Producer senior untuk Araya Consulting. Tugas Anda adalah menghasilkan dua format output secara berurutan. "
                     "Gunakan penanda [FORMAT_HUMAN] untuk format pertama dan [FORMAT_AI_VIDEO] untuk format kedua.\n\n"
-                    "Ketentuan [FORMAT_HUMAN]:\n"
-                    "- Buat skrip kreatif durasi 30-60 detik yang memiliki retensi tinggi.\n"
-                    "- Pisahkan jelas per adegan menggunakan struktur teks biasa yang mencantumkan [Visual/Aksi Kamera] dan [Audio/Narasi].\n"
-                    "- Harus menyertakan HOOK kuat di awal, isi (BODY), dan Call to Action (CTA) yang jelas.\n\n"
-                    "Ketentuan [FORMAT_AI_VIDEO]:\n"
-                    "- Hanya berisi teks kalimat narasi/ucapan murni saja dari awal sampai akhir.\n"
-                    "- JANGAN sertakan instruksi visual, jangan ada tanda kurung, jangan ada teks 'Hook', 'Visual', 'Audio', atau tanda baca pembatas adegan.\n"
-                    "- Format ini harus berupa paragraf teks bersih yang siap di-copy paste langsung ke aplikasi AI Text-to-Video tanpa perlu diedit lagi oleh pengguna.\n\n"
-                    "Gaya Bahasa untuk kedua format: Natural, santai, lugas khas praktisi Indonesia, persuasif, tidak kaku, dan tidak lebay."
+                    "1. [FORMAT_HUMAN]: Skrip terstruktur dengan [Visual/Aksi Kamera] dan [Audio/Narasi] untuk panduan manusia/kreator.\n"
+                    "   - Harus menyertakan HOOK kuat di awal, isi (BODY), dan Call to Action (CTA) yang jelas.\n"
+                    "   - Gaya bahasa natural, kasual/santai (gunakan saya/kamu jika relevan), tidak kaku, dan tidak lebay.\n\n"
+                    "2. [FORMAT_AI_VIDEO]: Sebuah 'Video Generation Prompt' yang sangat detail dan profesional. Format ini harus berisi deskripsi teknis untuk AI pembuat video (seperti InVideo AI), yang mencakup:\n"
+                    "   - Deskripsi Visual: Gaya shot, pencahayaan, aktivitas, dan subjek di layar.\n"
+                    "   - Narasi (Voiceover): Teks yang akan dibacakan oleh suara AI secara natural dan tidak lebay.\n"
+                    "   - Mood/Vibe: Instruksi suasana video (contoh: energetic, cinematic, minimalist).\n"
+                    "   - PENTING: Tuliskan prompt ini dalam satu alur cerita/perintah yang koheren dalam bahasa Indonesia agar AI Video Generator bisa langsung merakit video lengkap dengan visual dan suaranya dari teks ini tanpa perlu input tambahan lagi."
                 )
                 
                 response = client.models.generate_content(
@@ -160,20 +159,20 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                 
                 # Memisahkan hasil output berdasarkan tag penanda
                 human_script = ""
-                ai_script = ""
+                ai_prompt_script = ""
                 
                 if "[FORMAT_HUMAN]" in raw_text and "[FORMAT_AI_VIDEO]" in raw_text:
                     parts = raw_text.split("[FORMAT_AI_VIDEO]")
                     human_script = parts[0].replace("[FORMAT_HUMAN]", "").strip()
-                    ai_script = parts[1].strip()
+                    ai_prompt_script = parts[1].strip()
                 else:
                     human_script = raw_text
-                    ai_script = raw_text
+                    ai_prompt_script = raw_text
                 
                 st.success("✨ Skrip Berhasil Dibuat!")
                 
                 # 6. Pembuatan Sistem Tab Tampilan Komponen yang Rapi di Bagian Bawah
-                tab1, tab2 = st.tabs(["📋 1. Panduan Kreatif (Manusia)", "🤖 2. Narasi Murni (Siap Tempel ke AI Video)"])
+                tab1, tab2 = st.tabs(["📋 1. Panduan Kreatif (Manusia)", "🤖 2. Prompt Video AI (Siap Tempel ke AI Video)"])
                 
                 with tab1:
                     st.caption("Format terstruktur untuk dibaca langsung oleh Konten Kreator, Narator, atau Editor Video.")
@@ -186,14 +185,14 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                     st.text_area("⬇️ Salin Format Panduan Kreatif:", value=human_script, height=150, key="copy_human")
                 
                 with tab2:
-                    st.caption("Format teks bersih tanpa instruksi kamera. Siap di-copy langsung ke CapCut AI atau web AI video generator.")
+                    st.caption("Salin seluruh teks prompt di bawah ini ke AI Video Generator (InVideo, CapCut AI, dll) untuk merakit video otomatis.")
                     st.markdown(f"""
                         <div class="result-box" style="border-left-color: #10b981;">
-                            {ai_script.replace('\n', '<br>')}
+                            {ai_prompt_script.replace('\n', '<br>')}
                         </div>
                     """, unsafe_allow_html=True)
                     st.write("")
-                    st.text_area("📋 Blok & Salin Teks Murni Ini untuk AI Video Generator Anda:", value=ai_script, height=150, key="copy_ai")
+                    st.text_area("📋 Blok & Salin Prompt Video AI Ini:", value=ai_prompt_script, height=150, key="copy_ai")
                 
             except Exception as e:
                 st.error(f"Terjadi kesalahan pada sistem: {str(e)}")
