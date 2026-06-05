@@ -3,56 +3,79 @@ from google import genai
 from google.genai import types
 import os
 
-# 1. Konfigurasi Halaman & Tema Premium
+# 1. Konfigurasi Halaman Premium
 st.set_page_config(
     page_title="Araya Consulting - Script Generator AI",
     page_icon="🔮",
     layout="centered"
 )
 
-# Gaya CSS Kustom untuk membuat tampilan sangat elegan dan bersih
+# Gaya CSS Premium untuk merombak total tampilan agar sangat elegan
 st.markdown("""
     <style>
-    /* Mengubah font utama dan background soft */
+    /* Mengubah font utama menjadi modern dan bersih */
     html, body, [data-testid="stAppViewContainer"] {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #fcfcfc;
     }
     
-    /* Desain Kotak Input */
-    .stTextInput div div input, .stTextArea div div textarea {
-        border-radius: 8px !important;
-        border: 1px solid #e0e0e0 !important;
+    /* Mengubah desain kotak input teks dan area teks */
+    .stTextInput div div input, .stTextArea div div textarea, .stSelectbox div div div {
+        border-radius: 10px !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        transition: all 0.2s ease-in-out !important;
     }
     
-    /* Desain Tombol Utama Premium Merah Gelap Elegan */
+    /* Efek fokus saat kolom input diklik */
+    .stTextInput div div input:focus, .stTextArea div div textarea:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    }
+    
+    /* Tombol Utama Premium (Menggunakan Gradasi Biru-Tua Menyesuaikan Logo Anda) */
     .stButton>button {
-        background: linear-gradient(135deg, #ff4b4b 0%, #b30000 100%) !important;
+        background: linear-gradient(135deg, #1e40af 0%, #0f172a 100%) !important;
         color: white !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         border: none !important;
-        padding: 12px 24px !important;
-        font-weight: bold !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        transition: all 0.3s ease !important;
+        padding: 14px 28px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06) !important;
+        transition: all 0.25s ease !important;
+        margin-top: 15px;
     }
     .stButton>button:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 6px 12px rgba(211, 47, 47, 0.3) !important;
+        box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.3) !important;
     }
     
-    /* Kotak Hasil Skrip yang Elegan */
+    /* Kotak Hasil Review Skrip Kustom */
     .result-box {
-        background-color: #f8f9fa;
-        border-left: 5px solid #ff4b4b;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-top: 20px;
+        background-color: #ffffff;
+        border-left: 5px solid #1e40af;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-top: 25px;
+        color: #334155;
+        line-height: 1.6;
+    }
+    
+    /* Merapikan label input */
+    label {
+        font-weight: 600 !important;
+        color: #475569 !important;
+        margin-bottom: 6px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Mengambil API Key dari environment variable secara aman
+# 2. Manajemen Akses API Key Aman
 api_key = os.environ.get("GEMINI_API_KEY")
 
 if not api_key:
@@ -60,59 +83,74 @@ if not api_key:
     with st.sidebar:
         api_key = st.text_input("Gemini API Key", type="password")
 
-# 3. Menampilkan Logo Resmi yang Sudah Di-upload
-# Mencoba mendeteksi logo dengan ekstensi .png atau .jpg otomatis
+# 3. Struktur Header Elegan & Dinamis (Membaca logo yang Anda upload di image_25.png)
 logo_path = "logo.png"
 if not os.path.exists(logo_path):
     logo_path = "logo.jpg"
 
 if os.path.exists(logo_path):
-    # Membuat 3 kolom agar logo berada tepat di tengah (center) secara proporsional
-    col_logo1, col_logo2, col_logo3 = st.columns([1, 2, 1])
+    # Pengaturan kolom agar ukuran logo simetris di tengah halaman tablet
+    col_logo1, col_logo2, col_logo3 = st.columns([1, 1.8, 1])
     with col_logo2:
         st.image(logo_path, use_container_width=True)
-else:
-    # Fallback tulisan jika logo belum terbaca sempurna oleh server
-    st.markdown("<h3 style='text-align: center; color: #b30000; letter-spacing: 2px;'>ARAYA CONSULTING</h3>", unsafe_allow_html=True)
 
-# Header Judul Aplikasi
+# Sub-judul deskriptif dengan tipografi elegan yang rapi
 st.markdown("""
-    <div style='text-align: center; padding-bottom: 10px;'>
-        <h1 style='color: #1e1e1e; margin-top: 5px; font-weight: 800; font-size: 32px;'>🔮 Script Generator AI</h1>
-        <p style='color: #666666; font-size: 15px; max-width: 500px; margin: 0 auto;'>
+    <div style='text-align: center; margin-top: 15px; margin-bottom: 25px;'>
+        <h2 style='color: #0f172a; font-weight: 800; font-size: 28px; margin-bottom: 8px;'>🔮 Script Generator AI</h2>
+        <p style='color: #64748b; font-size: 15px; max-width: 540px; margin: 0 auto; line-height: 1.5;'>
             Platform cerdas peracik skrip video pendek viral untuk TikTok, Reels, dan Shorts dengan pendekatan psikologi audiens.
         </p>
     </div>
 """, unsafe_allow_html=True)
+
 st.write("---")
 
-st.subheader("🎬 TikTok Viral Script AI")
-st.caption("Lengkapi detail di bawah untuk menghasilkan skrip kustom ber-retensi tinggi.")
+# 4. Formulir Formula Konten Terstruktur (Dibuat Grid Baris Berdampingan Agar Elegan)
+st.markdown("#### 🎬 Formula Konten Rencana")
+st.caption("Isi parameter di bawah untuk menghasilkan skrip kustom dengan tingkat retensi tinggi.")
+st.write("")
 
-# 4. Form Input Terstruktur
-brand = st.text_input("🏷️ Nama Brand / Usaha *wajib*", placeholder="e.g., Seblak Salah, Mie Judes, Araya Consulting...")
-niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kuliner, Kecantikan, Finance, Otomotif...")
-topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Menu pedas baru, Jualan online, Tips kepemimpinan...")
-audience = st.text_input("👤 Target Audience *wajib*", placeholder="e.g., Pecinta pedas Lamongan, Gen Z, Pemilik bisnis...")
+# Baris 1: Brand & Niche berdampingan
+row1_col1, row1_col2 = st.columns(2)
+with row1_col1:
+    brand = st.text_input("🏷️ Nama Brand / Usaha *wajib*", placeholder="e.g., Seblak Salah, Mie Judes")
+with row1_col2:
+    niche = st.text_input("🔮 Niche *wajib*", placeholder="e.g., Kuliner, Otomotif, Mentorship")
 
-pain_point = st.text_input("🩸 Pain Point Audience (optional)", placeholder="e.g., Bingung cari makan siang, Pengen berkembang tapi sibuk...")
-desire = st.text_input("💖 Desire / Hasrat Audience (optional)", placeholder="e.g., Pengen makan enak kenyang, Pengen jadi leader hebat...")
+# Baris 2: Topik & Target Audience berdampingan
+row2_col1, row2_col2 = st.columns(2)
+with row2_col1:
+    topic = st.text_input("💡 Topic / Produk *wajib*", placeholder="e.g., Menu pedas baru, Tips bisnis")
+with row2_col2:
+    audience = st.text_input("👤 Target Audience *wajib*", placeholder="e.g., Pecinta pedas Lamongan, Pemilik bisnis")
 
-col1, col2 = st.columns(2)
-with col1:
+# Baris 3: Fitur Psikologi (Pain & Desire) berdampingan
+row3_col1, row3_col2 = st.columns(2)
+with row3_col1:
+    pain_point = st.text_input("🩸 Pain Point Audience (optional)", placeholder="e.g., Bingung cari makan siang, Takut gagal")
+with row3_col2:
+    desire = st.text_input("💖 Desire / Hasrat Audience (optional)", placeholder="e.g., Pengen kenyang hemat, Pengen tim otomatis")
+
+# Baris 4: Pengaturan Goal & Gaya Bahasa berdampingan
+row4_col1, row4_col2 = st.columns(2)
+with row4_col1:
     content_goal = st.selectbox(
         "📢 Content Goal",
         ["Soft Selling (Edukasi + Solusi)", "Hard Selling (Promo Langsung)", "Engagement (Interaksi Komen/Share)", "Brand Awareness"]
     )
-with col2:
+with row4_col2:
     style = st.selectbox(
         "🎨 Style",
         ["Storytelling / POV (Point of View)", "Edukatif & Profesional", "Kasual / Santai Bicara Depan Kamera", "Komedi Ringan / Satir"]
     )
 
+# Baris 5: Deskripsi Tambahan lebar penuh
 description = st.text_area("📝 Deskripsi ide konten kamu (optional)", placeholder="Ceritakan konsep video kamu, pesan utama, atau hal spesifik yang mau disampaikan...")
 
-# 5. Tombol Aksi & Logika Pemanggilan Gemini API
+st.write("")
+
+# 5. Tombol Aksi Premium & Logika Integrasi Gemini API
 if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
     if not brand or not niche or not topic or not audience:
         st.error("Mohon isi kolom Brand, Niche, Topic, dan Target Audience terlebih dahulu!")
@@ -154,18 +192,20 @@ if st.button("🚀 RACIK SKRIP VIRAL SEKARANG", use_container_width=True):
                     ),
                 )
                 
-                st.success("✨ Skrip Berhasil Dibuat!")
+                st.success("✨ Skrip Berhasil Dirakit!")
                 st.markdown("### 📋 Hasil Rekomendasi Skrip")
                 
+                # Kontainer keluaran hasil skrip premium menggunakan gaya CSS kustom
                 st.markdown(f"""
                     <div class="result-box">
                         {response.text.replace('\n', '<br>')}
                     </div>
                 """, unsafe_allow_html=True)
                 
+                # Kotak ekstraksi instan untuk kemudahan copy-paste di tablet tanpa ribet
                 st.write("")
                 st.text_area("⬇️ Blok & Salin Teks Skrip di Bawah Ini:", value=response.text, height=180)
-                st.caption("💡 Tips Praktis: Tahan atau ketuk dua kali di dalam kotak teks di atas untuk menyalin (*copy*) seluruh skrip ke CapCut tablet Anda.")
+                st.caption("💡 Tips Praktis: Tahan atau ketuk dua kali di dalam kotak teks di atas untuk menyalin (*copy*) seluruh skrip langsung ke CapCut tablet Anda.")
                 
             except Exception as e:
                 st.error(f"Terjadi kesalahan pada sistem: {str(e)}")
